@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, Plus } from "lucide-react";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Edit, Search, Trash2, Plus, Eye } from "lucide-react";
+import { Link } from "react-router-dom"; 
 
 // Sample user data
 const userData = [
@@ -69,11 +69,11 @@ const UsersTable = () => {
       transition={{ delay: 0.2 }}
     >
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-100">User</h2>
+        <h2 className="text-xl font-semibold text-gray-100">List User</h2>
         <div className="relative">
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder="Cari user..."
             className="bg-gray-600 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             value={searchTerm}
             onChange={handleSearch}
@@ -86,7 +86,7 @@ const UsersTable = () => {
       <div className="mb-4">
         <Link to="/users/create" className="text-green-400 hover:text-green-300 flex items-center">
           <Plus size={18} />
-          <span className="ml-2">Add User</span>
+          <span className="ml-2">Tambah User</span>
         </Link>
       </div>
 
@@ -94,17 +94,34 @@ const UsersTable = () => {
         <table className="min-w-full divide-y divide-gray-700">
           <thead>
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Aksi</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Nama</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Email</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Role</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-gray-700">
             {filteredUsers.map((user) => (
               <motion.tr key={user.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 flex gap-2">
+                  <Link to={`/users/edit/${user.id}`} className="text-indigo-400 hover:text-indigo-300 mr-2">
+                    <Edit size={18} />
+                  </Link>
+                  <button
+                    className="text-red-400 hover:text-red-300"
+                    onClick={() => handleDeleteClick(user.id)}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                  <button
+                    className="text-indigo-400 hover:text-indigo-300 mr-2"
+                    onClick={() => handleShowUser(user)}
+                  >
+                    <Eye size={18} />
+                  </button>
+                </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center">
                     <div className="flex-shrink-0 h-10 w-10">
@@ -139,20 +156,6 @@ const UsersTable = () => {
                     {user.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                  <Link to={`/users/edit/${user.id}`} className="text-indigo-400 hover:text-indigo-300 mr-2">
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDeleteClick(user.id)}
-                    className="text-red-400 hover:text-red-300 mr-2"
-                  >
-                    Delete
-                  </button>
-                  <button className="text-indigo-400 hover:text-indigo-300" onClick={() => handleShowUser(user)}>
-                    Show
-                  </button>
-                </td>
               </motion.tr>
             ))}
           </tbody>
@@ -184,20 +187,20 @@ const UsersTable = () => {
       {isDeleteModalVisible && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-gray-800 p-6 rounded-lg shadow-xl max-w-sm w-full">
-            <h3 className="text-lg text-white font-semibold">Are you sure?</h3>
-            <p className="text-gray-300 mt-4">Do you really want to delete this user? This action cannot be undone.</p>
+            <h3 className="text-lg text-white font-semibold">Apa kamu yakin?</h3>
+            <p className="text-gray-300 mt-4">Apakah Anda benar-benar ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.</p>
             <div className="mt-6 flex justify-end space-x-4">
               <button
                 onClick={handleCancelDelete}
                 className="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-400"
               >
-                Cancel
+                Batalkan
               </button>
               <button
                 onClick={handleConfirmDelete}
                 className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-500"
               >
-                Yes, Delete
+                Ya, Hapus
               </button>
             </div>
           </div>

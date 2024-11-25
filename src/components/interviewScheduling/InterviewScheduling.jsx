@@ -1,21 +1,35 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit, Trash2, CheckCircle } from "lucide-react";
+import { Plus, Edit, Trash2, CheckCircle, Search } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const InterviewScheduling = () => {
   const [interviews, setInterviews] = useState([
-    { id: 1, candidate: "Roy Rohmat", interviewer: "John Doe", date: "2024-11-20T10:00:00", status: "Scheduled" },
-    { id: 2, candidate: "Ebde Muttakin", interviewer: "Jane Smith", date: "2024-11-21T14:00:00", status: "Scheduled" },
-    { id: 3, candidate: "Komeng Adul", interviewer: "John Doe", date: "2024-11-22T10:00:00", status: "Scheduled" },
-    { id: 4, candidate: "Angga Yanto", interviewer: "Jane Smith", date: "2024-11-23T14:00:00", status: "Scheduled" },
-    { id: 5, candidate: "Dani Batubara", interviewer: "John Doe", date: "2024-11-24T10:00:00", status: "Scheduled" },
-    { id: 6, candidate: "Isman Ahmad", interviewer: "Jane Smith", date: "2024-11-25T14:00:00", status: "Scheduled" },
-    { id: 7, candidate: "Alam Ilham", interviewer: "John Doe", date: "2024-11-26T10:00:00", status: "Scheduled" },
+    { id: 1, candidate: "Roy Rohmat", interviewer: "John Doe", date: "2024-11-20T10:00:00", status: "Scheduled", alasan: "" },
+    { id: 2, candidate: "Ebde Muttakin", interviewer: "Jane Smith", date: "2024-11-21T14:00:00", status: "Scheduled", alasan: "" },
+    { id: 3, candidate: "Komeng Adul", interviewer: "John Doe", date: "2024-11-22T10:00:00", status: "Scheduled", alasan: "" },
+    { id: 4, candidate: "Angga Yanto", interviewer: "Jane Smith", date: "2024-11-23T14:00:00", status: "Scheduled", alasan: "" },
+    { id: 5, candidate: "Dani Batubara", interviewer: "John Doe", date: "2024-11-24T10:00:00", status: "Scheduled", alasan: "" },
+    { id: 6, candidate: "Isman Ahmad", interviewer: "Jane Smith", date: "2024-11-25T14:00:00", status: "Scheduled", alasan: "" },
+    { id: 7, candidate: "Alam Ilham", interviewer: "John Doe", date: "2024-11-26T10:00:00", status: "Scheduled", alasan: "" },
   ]);
 
+  const [searchTerm, setSearchTerm] = useState(""); // State for the search term
   const [showDeleteModal, setShowDeleteModal] = useState(false); // State for controlling the modal visibility
   const [interviewToDelete, setInterviewToDelete] = useState(null); // Store the interview to be deleted
+
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+  };
+
+  // Filter interviews based on the search term
+  const filteredInterviews = interviews.filter((interview) => {
+    return (
+      interview.candidate.toLowerCase().includes(searchTerm) ||
+      interview.interviewer.toLowerCase().includes(searchTerm)
+    );
+  });
 
   const handleDeleteInterview = (id) => {
     setInterviewToDelete(id); // Store the interview id to be deleted
@@ -40,10 +54,24 @@ const InterviewScheduling = () => {
       transition={{ delay: 0.2 }}
     >
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-100">Interview Scheduling</h2>
+        <h2 className="text-xl font-semibold text-gray-100">List Interview Scheduling</h2>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search candidates..."
+            className="bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={handleSearch}
+            value={searchTerm}
+          />
+          <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
+        </div>
+      </div>
+
+      {/* Add Button */}
+      <div className="mb-4">
         <Link to="/interview-schedulings/create" className="text-green-400 hover:text-green-300 flex items-center">
           <Plus size={18} />
-          <span className="ml-2">Add Interview Scheduling</span>
+          <span className="ml-2">Tambah Interview Scheduling</span>
         </Link>
       </div>
 
@@ -52,25 +80,22 @@ const InterviewScheduling = () => {
         <table className="min-w-full divide-y divide-gray-700">
           <thead>
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Aksi</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Candidate</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Interviewer</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Tanggal</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Alasan</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
-            {interviews.map((interview) => (
+            {filteredInterviews.map((interview) => (
               <motion.tr
                 key={interview.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
-                <td className="px-6 py-4 whitespace-nowrap">{interview.candidate}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{interview.interviewer}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{new Date(interview.date).toLocaleString()}</td>
-                <td className="px-6 py-4 whitespace-nowrap">{interview.status}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                   <div className="flex items-center space-x-3">
                     <Link
@@ -94,6 +119,15 @@ const InterviewScheduling = () => {
                       <CheckCircle size={18} />
                     </button>
                   </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">{interview.candidate}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{interview.interviewer}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{new Date(interview.date).toLocaleString()}</td>
+                <td className="px-6 py-4 whitespace-nowrap">{interview.status}</td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                  {interview.status === "Cancelled" || interview.status === "Completed"
+                    ? interview.alasan
+                    : "-"}
                 </td>
               </motion.tr>
             ))}

@@ -8,6 +8,7 @@ const CreateInterviewSchedulingForm = () => {
     interviewer: "",
     date: "",
     status: "Scheduled",
+    reason: "", // Reason for "Cancelled" or "Completed"
   });
 
   const [error, setError] = useState("");
@@ -30,7 +31,11 @@ const CreateInterviewSchedulingForm = () => {
       return;
     }
 
-    // Optionally, you could also add more specific validation for formats (like date format).
+    // If the status is Cancelled or Completed, the reason must also be provided
+    if ((newInterview.status === "Cancelled" || newInterview.status === "Completed") && !newInterview.reason) {
+      setError("Reason is required for Cancelled or Completed status.");
+      return;
+    }
 
     console.log("Interview created:", newInterview);
 
@@ -39,6 +44,7 @@ const CreateInterviewSchedulingForm = () => {
       interviewer: "",
       date: "",
       status: "Scheduled",
+      reason: "",
     });
 
     setSuccess(true);
@@ -62,6 +68,7 @@ const CreateInterviewSchedulingForm = () => {
       {error && <div className="bg-red-600 text-white p-3 mb-4 rounded-lg">{error}</div>}
       {success && <div className="bg-green-600 text-white p-3 mb-4 rounded-lg">Interview added successfully!</div>}
 
+      {/* Form */}
       <form onSubmit={handleAddInterview} className="space-y-6">
         {/* Candidate Field */}
         <div>
@@ -120,6 +127,21 @@ const CreateInterviewSchedulingForm = () => {
             <option value="Cancelled">Cancelled</option>
           </select>
         </div>
+
+        {/* Reason Field (only show if status is Completed or Cancelled) */}
+        {(newInterview.status === "Cancelled" || newInterview.status === "Completed") && (
+          <div>
+            <label htmlFor="alasan" className="text-gray-300 text-lg">Alasan</label>
+            <textarea
+              id="alasan"
+              name="alasam"
+              value={newInterview.alasan}
+              onChange={handleInputChange}
+              className="bg-gray-700 text-white placeholder-gray-400 rounded-lg w-full p-3 mt-2"
+              required
+            />
+          </div>
+        )}
 
         {/* Back and Submit Buttons */}
         <div className="flex justify-between mt-6">

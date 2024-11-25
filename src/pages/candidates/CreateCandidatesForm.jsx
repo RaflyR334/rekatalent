@@ -1,53 +1,94 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import axios from "axios";
+
+// Endpoint API untuk menambah candidate
+const API_URL = "https://dev.rekatalent.dev.rekadia.co.id/services/api/Candidate";
 
 const CreateCandidateForm = () => {
-  const navigate = useNavigate(); // Hook to navigate programmatically
+  const navigate = useNavigate(); // Hook untuk navigasi programatik
   const [newCandidate, setNewCandidate] = useState({
-    nama: "",
-    posisi: "",
-    notel: "",
+    name: "",
+    position: "", // Pastikan posisi diset sebagai string
     email: "",
+    phoneNumber: "",
   });
 
-  const [error, setError] = useState(""); // For error messages
-  const [success, setSuccess] = useState(false); // For success message
+  const [error, setError] = useState(""); // Untuk pesan error
+  const [success, setSuccess] = useState(false); // Untuk pesan sukses
 
-  // Handle input changes
+  // Handle perubahan input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewCandidate({ ...newCandidate, [name]: value });
   };
 
-  // Handle form submission
-  const handleCreateCandidateForm = (e) => {
+  // Handle submit form
+  const handleCreateCandidateForm = async (e) => {
     e.preventDefault();
-    // Validate input fields
-    if (!newCandidate.nama || !newCandidate.email || !newCandidate.posisi || !newCandidate.notel) {
-      setError("All fields are required.");
+
+    // Validasi input
+    if (!newCandidate.name || !newCandidate.email || !newCandidate.position || !newCandidate.phoneNumber) {
+      setError("Semua field harus diisi.");
       return;
     }
 
-    console.log("New Candidate Added:", newCandidate);
-    setSuccess(true); // Show success message
+    // Data yang akan dikirim (gunakan JSON jika API mengharapkan format JSON)
+    const candidateData = {
+      name: newCandidate.name,
+      position: newCandidate.position,
+      email: newCandidate.email,
+      phoneNumber: newCandidate.phoneNumber
+    };
 
-    // Reset form after submission
-    setNewCandidate({
-      nama: "",
-      posisi: "",
-      notel: "",
-      email: "",
-    });
+    try {
+      // Mengirim data ke API dengan menggunakan format JSON
+      const response = await axios.post(API_URL, candidateData, {
+        headers: {
+          "Content-Type": "application/json", // Header untuk JSON
+        },
+        timeout: 10000, // Menambahkan waktu timeout (dalam milidetik)
+      });
 
-    setTimeout(() => {
-      navigate("/candidates"); // Navigate to candidates list
-    }, 1500);
+      if (response.status === 200) {
+        setSuccess(true); // Tampilkan pesan sukses
+        setError(""); // Reset pesan error
+
+        // Reset form setelah pengiriman
+        setNewCandidate({
+          name: "",
+          position: "", // Reset ke string kosong
+          email: "",
+          phoneNumber: "",
+        });
+
+        setTimeout(() => {
+          navigate("/candidates"); // Navigasi ke halaman list kandidat
+        }, 1500);
+      }
+    } catch (err) {
+      console.error("Gagal menambah kandidat:", err);
+
+      if (err.response) {
+        // Jika ada response error dari server
+        console.error("Server Error: ", err.response.data);
+        setError(`Error: ${err.response.data.message || 'Terjadi kesalahan saat mengirim data.'}`);
+      } else if (err.request) {
+        // Jika tidak ada response dari server
+        console.error("Request Error: ", err.request);
+        setError('Tidak ada respon dari server. Pastikan server berjalan dan periksa koneksi Anda.');
+      } else {
+        // Jika kesalahan terjadi di bagian lain (misalnya masalah di kode)
+        console.error("Error: ", err.message);
+        setError('Terjadi kesalahan saat mengirim data. Silakan coba lagi.');
+      }
+    }
   };
 
-  // Handle closing the form (navigate back)
+  // Handle menutup form (kembali ke halaman kandidat)
   const handleCloseForm = () => {
-    navigate("/candidates"); // Redirect to the candidates list
+    navigate("/candidates"); // Redirect ke halaman list kandidat
   };
 
   return (
@@ -58,66 +99,56 @@ const CreateCandidateForm = () => {
       transition={{ delay: 0.2 }}
     >
       <div className="relative">
-        {/* Close Button */}
+        {/* Tombol Tutup */}
         <button
           onClick={handleCloseForm}
           className="text-gray-400 hover:text-gray-300 absolute top-2 right-2"
         >
+          {/* Tombol Tutup */}
         </button>
-        <h3 className="text-3xl font-semibold text-gray-100 mb-6">Create New Candidate</h3>
+        <h3 className="text-3xl font-semibold text-gray-100 mb-6">Tambah Candidate Baru</h3>
 
-        {/* Display error message */}
+        {/* Menampilkan pesan error */}
         {error && (
           <div className="bg-red-600 text-white p-3 mb-4 rounded-lg">
             {error}
           </div>
         )}
 
-        {/* Display success message */}
+        {/* Menampilkan pesan sukses */}
         {success && (
           <div className="bg-green-600 text-white p-3 mb-4 rounded-lg">
-            Candidate added successfully!
+            Kandidat berhasil ditambahkan!
           </div>
         )}
 
         <form onSubmit={handleCreateCandidateForm} className="space-y-6">
           <div>
-            <label htmlFor="nama" className="text-gray-300 text-lg">Name</label>
+            <label htmlFor="name" className="text-gray-300 text-lg">Name</label>
             <input
               type="text"
-              id="nama"
-              name="nama"
-              value={newCandidate.nama}
+              id="name"
+              name="name"
+              value={newCandidate.name}
               onChange={handleInputChange}
               className="bg-gray-700 text-white placeholder-gray-400 rounded-lg w-full p-3 mt-2"
               required
+              placeholder="Masukkan Name"
             />
           </div>
 
           <div>
-            <label htmlFor="posisi" className="text-gray-300 text-lg">Position</label>
+            <label htmlFor="position" className="text-gray-300 text-lg">Position</label>
             <input
-              type="text"
-              id="posisi"
-              name="posisi"
-              value={newCandidate.posisi}
-              onChange={handleInputChange}
-              className="bg-gray-700 text-white placeholder-gray-400 rounded-lg w-full p-3 mt-2"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="notel" className="text-gray-300 text-lg">Phone Number</label>
-            <input
-              type="text"
-              id="notel"
-              name="notel"
-              value={newCandidate.notel}
-              onChange={handleInputChange}
-              className="bg-gray-700 text-white placeholder-gray-400 rounded-lg w-full p-3 mt-2"
-              required
-            />
+                type="text"
+                id="position"
+                name="position"
+                value={newCandidate.position}
+                onChange={handleInputChange}
+                className="bg-gray-700 text-white placeholder-gray-400 rounded-lg w-full p-3 mt-2"
+                required
+                placeholder="Masukkan Position"
+             />
           </div>
 
           <div>
@@ -130,25 +161,40 @@ const CreateCandidateForm = () => {
               onChange={handleInputChange}
               className="bg-gray-700 text-white placeholder-gray-400 rounded-lg w-full p-3 mt-2"
               required
+              placeholder="Masukkan Email"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="phoneNumber" className="text-gray-300 text-lg">No.Telepon</label>
+            <input
+              type="text"
+              id="phoneNumber"
+              name="phoneNumber"
+              value={newCandidate.phoneNumber}
+              onChange={handleInputChange}
+              className="bg-gray-700 text-white placeholder-gray-400 rounded-lg w-full p-3 mt-2"
+              required
+              placeholder="Masukkan No.Telepon"
             />
           </div>
 
           <div className="flex justify-between mt-6">
-            {/* Back Button */}
+            {/* Tombol Kembali */}
             <button
               type="button"
               onClick={handleCloseForm}
               className="bg-gray-600 hover:bg-gray-500 text-white px-6 py-3 rounded-lg transition-all"
             >
-              Back
+              Kembali
             </button>
 
-            {/* Submit Button */}
+            {/* Tombol Submit */}
             <button
               type="submit"
               className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg transition-all"
             >
-              Add Candidate
+              Tambah Candidate
             </button>
           </div>
         </form>

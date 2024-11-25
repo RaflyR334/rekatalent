@@ -1,4 +1,4 @@
-import { BarChart2, Users, UserCheck, Calendar, Settings, Menu } from "lucide-react";
+import { BarChart2, Users, UserCheck, Calendar, FileText, Settings, CheckCircle, Briefcase, Clipboard, Menu } from "lucide-react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -8,7 +8,11 @@ const SIDEBAR_ITEMS = [
   { name: "User", icon: Users, color: "#EC4899", href: "/users" },
   { name: "Candidate", icon: UserCheck, color: "#8B5CF6", href: "/candidates" },
   { name: "Interview Scheduling", icon: Calendar, color: "#6EE7B7", href: "/interview-schedulings" },
-  { name: "Settings", icon: Settings, color: "#6EE7B7", href: "/settings" },
+  { name: "Psycho Test Scheduling", icon: Clipboard, color: "#8B5CF6", href: "/test-schedulings" },
+  { name: "Interview", icon: Briefcase, color: "#8B5CF6", href: "/interviews" },
+  { name: "Psychological Test", icon: CheckCircle, color: "#8B5CF6", href: "/psychological-tests" }, 
+  { name: "Report", icon: FileText, color: "#F59E0B", href: "/reports" },
+  { name: "Setting", icon: Settings, color: "#6EE7B7", href: "/settings" },
 ];
 
 const Sidebar = () => {

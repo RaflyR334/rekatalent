@@ -100,7 +100,7 @@ const EditCandidateForm = () => {
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="text-gray-300 text-lg">Name</label>
+          <label className="text-gray-300 text-lg">Nama</label>
           <input
             type="text"
             name="nama"
@@ -112,7 +112,7 @@ const EditCandidateForm = () => {
         </div>
 
         <div>
-          <label className="text-gray-300 text-lg">Position</label>
+          <label className="text-gray-300 text-lg">Posisi</label>
           <input
             type="text"
             name="posisi"
@@ -124,7 +124,7 @@ const EditCandidateForm = () => {
         </div>
 
         <div>
-          <label className="text-gray-300 text-lg">Phone Number</label>
+          <label className="text-gray-300 text-lg">No.Telepon</label>
           <input
             type="text"
             name="notel"
@@ -162,7 +162,7 @@ const EditCandidateForm = () => {
             type="submit"
             className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg transition-all"
           >
-            Save Changes
+            Simpan Perubahan
           </button>
         </div>
       </form>
